@@ -1,2 +1,3 @@
-# praktyki
-Repo na projekty z praktyk
+# Praktyki
+
+### 
