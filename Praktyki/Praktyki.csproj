@@ -7,4 +7,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Pastel" />
+    <None Remove="Meetings\" />
+    <None Remove="Utilities\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Meetings\" />
+    <Folder Include="Utilities\" />
+  </ItemGroup>
 </Project>
