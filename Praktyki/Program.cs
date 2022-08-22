@@ -1,8 +1,10 @@
 ﻿using Console = Praktyki.Utilities.ConsoleColors;
 using static Praktyki.Utilities.AllowedColor;
 using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Threading.Channels;
+using Praktyki.Utilities;
+using System.Reflection;
+using System;
 
 internal class Program
 {
@@ -12,21 +14,27 @@ internal class Program
 
         while (exit != true)
         {
-            Console.Write("Enter date of meeting: ");
+            Regex dateRegex = new Regex(@"([0-9]{1,2}\.[0-9]{1,2})|([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4})"); /* xx.xx.xxxx  x - [0-9]*/
 
-            string? date = Console.ReadLine(Yellow);
+            int option = 0;
+
+            string? date = ListenForDate("Enter date of meeting", White, new[] { ("Exit", Red), (dateRegex.ToString(), Yellow) }, Gray, ref option);
+
+            if (option == 1) // Exit
+            {
+                exit = true;
+                continue;
+            }
 
             if (string.IsNullOrWhiteSpace(date)) {
                 Console.WriteLine("Date can't be null!", Red);
                 continue;
             }
 
-            Regex dateRegex = new Regex(@"[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}"); /* xx.xx.xxxx  x - [0-9]*/
-            //Regex dateRegex = new Regex(@"[0-9]{1,2}\.[0-9]{1,2}"); /* xx.xx  x - [0-9]*/
-
             if (dateRegex.IsMatch(date))
             {
                 FormatDate(ref date);
+
                 bool succes = LoadMeeting(date);
 
                 if (!succes)
@@ -45,6 +53,9 @@ internal class Program
             Console.Clear();
             //Console.NewLine();
         }
+
+        Console.Clear();
+        Console.WriteLine("Exiting the program...", Red);
     }
 
     static void FormatDate(ref string date)
@@ -64,9 +75,116 @@ internal class Program
         if (dateParts.Length == 2) //No year
         {
             date = string.Concat(string.Join('.', dateParts), '.', DateTime.Today.Year); // Set to passed date with todays year
+            return;
         }
 
         date = string.Join('.', dateParts); // Set to passed date with extended month and day numbers
+    }
+
+    static string ListenForDate(string entry,
+                                AllowedColor entryColor,
+                                (string, AllowedColor)[] targets,
+                                AllowedColor standardColor,
+                                ref int matchedIndex)
+    {
+        string input = "";
+
+        bool exit = false;
+
+        while (!exit)
+        {
+
+            Console.Write($"{entry}: ", entryColor);
+
+            (string, AllowedColor) toWrite = ("", standardColor);
+
+            int counter = 0;
+
+            foreach ((string, AllowedColor) target in targets)
+            {
+                bool match = false;
+
+                if (IsRegex(input))
+                {
+                    if (new Regex(target.Item1).IsMatch(input))
+                    {
+                        match = true;
+                    }
+                } else
+                {
+                    if (input == target.Item1)
+                    {
+                        match = true;
+                    }
+                }
+
+                if (match)
+                {
+                    toWrite = (input, target.Item2);
+
+                    matchedIndex = counter + 1;
+
+                    break;
+                }
+                else
+                {
+                    toWrite = (input, standardColor);
+                }
+
+                counter++;
+            }
+
+            Console.Write(toWrite.Item1, toWrite.Item2);
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+            Console.NewLine();
+
+            if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                if (input.Length == 0)
+                {
+                    Console.Clear();
+                    continue;
+                }
+                exit = true;
+                Console.Clear();
+                continue;
+            } else if (keyInfo.Key == ConsoleKey.Backspace)
+            {
+                if (input.Length == 0)
+                {
+                    continue;
+                }
+
+                input = input.Remove(input.Length - 1);
+            } else
+            {
+                input += keyInfo.KeyChar;
+            }
+
+            Console.Clear();
+        }
+
+        return input;
+    }
+
+    static bool IsRegex(string str)
+    {
+        if (str.Length == 0)
+        {
+            return false;
+        }
+
+        try
+        {
+            new Regex(str);
+        } catch
+        {
+            return false;
+        }
+
+        return true;
     }
 
     static bool LoadMeeting(string date)
@@ -79,7 +197,7 @@ internal class Program
 
         string[] dateSplited = date.Split('.');
         
-        Type? meetingClass = assembly.GetType($"Praktyki.Meetings.M_{string.Join('_', dateSplited)}");
+        Type? meetingClass = assembly.GetType($"Praktyki.Meetings.M_{string.Join('_', dateSplited).Trim()}");
 
         if (meetingClass == null)
         {
@@ -111,10 +229,10 @@ internal class Program
 
         string exercise = "";
 
+        int selectedIndex = 0;
+
         while (exercise != "Exit")
         {
-            int selectedIndex = 0;
-
             while (exercise == "")
             {
                 Console.Clear();
