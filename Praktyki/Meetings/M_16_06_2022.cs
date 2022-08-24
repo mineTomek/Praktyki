@@ -1,7 +1,5 @@
 ﻿using static Praktyki.Utilities.ConsoleColors;
 using static Praktyki.Utilities.AllowedColor;
-using static Program;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Praktyki.Meetings
 {
@@ -16,78 +14,94 @@ namespace Praktyki.Meetings
 
         static void BoolFromInt()
         {
-            WriteLine("Wynik testów:", Yellow);
+            WriteFromString(@"
+&y'Wynik testów:&'
 
-            Write("Nie ma możliwości konversji pomiędzy typem ");
-            Write("bool", Green);
-            Write(", a ");
-            Write("int", Green);
-            WriteLine(" w tą i odwrotną stronę.");
-
-            WriteLine("Ani niejawna ani jawna konwersja nie działają.");
-
-            Write("Zwracany jest błąd kompilacji, więc nawet blok ");
-            Write("try", Blue);
-            WriteLine(" nie pomaga.");
+Nie ma możliwości konversji pomiędzy typem &g'bool&', a &g'int&' w tą i odwrotną stronę.
+Ani niejawna ani jawna konwersja nie działają.
+Zwracany jest błąd kompilacji, więc nawet blok &b'try&' nie pomaga.
+");
         }
 
         static void SwitchesWithoutBrakes()
         {
-            WriteLine("Kod zwracający błąd:", Yellow);
-            WriteLine(@"
-switch(someInt)
+            WriteFromString(@"
+&y'Kod zwracający &r'błąd&y':&'
+
+&m'switch&'(someInt)
 {
-    case 1:
-        WriteLine(""Zdał test na \""1\"");
-    case 2:
-        WriteLine(""Zdał test na \""2\"");
-    default:
-        WriteLine(""Wszystko inne."");
+    &b'case &y'1&':
+        &y'WriteLine&'(&c'""Zdał test na \""1\""&');
+    &b'case &y'2&':
+        &y'WriteLine&'(&c'""Zdał test na \""2\"");
+    &b'default&':
+        &y'WriteLine&'(&c'""Wszystko inne.""&');
 }
-", Red);
-            WriteLine("Kod, który się skompiluje:", Yellow);
-            WriteLine(@"
-switch(someInt)
+
+&y'Kod, który się &g'kompiluje&y':
+
+&m'switch&'(someInt)
 {
-    case 1:
-        WriteLine(""Zdał test na \""1\"");
-        break;
-    case 2:
-        WriteLine(""Zdał test na \""2\"");
-        return;
-    default:
-        WriteLine(""Wszystko inne."");
-        break;
+    &b'case &y'1&':
+        &y'WriteLine&'(&c'""Zdał test na \""1\""&');
+        &m'break&';
+    &b'case &y'2&':
+        &y'WriteLine&'(&c'""Zdał test na \""2\"");
+        &m'return&';
+    &b'default&':
+        &y'WriteLine&'(&c'""Wszystko inne.""&');
+        &m'break&';
 }
-", Green);
 
-            WriteLine("Wynik testów:", Yellow);
+&y'Wyniki testów:&'
 
-            Write("Da się użyć bloku ");
-            Write("switch", Blue);
-            Write(" z ");
-            Write("case", Magenta);
-            Write("'ami bez ");
-            Write("break", Magenta);
-            Write("'ow, ale należy wtedy użyć ");
-            Write("return", Magenta);
-            WriteLine(" jako zastępnika.");
-
-            Write("Wtedy jednak kod po bloku ");
-            Write("switch", Blue);
-            WriteLine(" nie zostanie wywołany żaden kod (będący w tej samej metodzie).");
-
-            Write("Kompilator zwraca błąd przy użyciu");
-            Write("niczego", Gray);
-            Write(" lub ");
-            Write("continue", Magenta);
-            WriteLine(".");
-
+Da się użyć bloku &b'switch&' z &m'case&''ami bez &m'break&''ów, ale wtedy nazeży użyć &m'return&' jako zastępnika.
+Wtedy jednak po bloku &b'switch&' nie zostanie wywołany żaden kod &dgr'(będący w tej samej metodzie)&'.
+Kompilator zwraca błąd przy użyciu &gr'niczego&' lub &m'continue&'.
+");
         }
 
         static void IntBeyondBoundries()
         {
-            WriteLine("To zadanie nie zostało jeszcze zrobione...", Red);
+            int someInt = 0;
+
+            unchecked
+            {
+                someInt = int.MaxValue + 1;
+            }
+
+            WriteFromString(@"
+&y'Obserwacje:&'
+
+Pisząc taki kod:
+
+    &b'int&' someInt = &b'int&'.MaxValue + &y'1&';
+
+nie uda się przypisać zmiennej &g'int&' wartości większej niż jej maksymalna wartość &gr'(&y'" + int.MaxValue + @"&gr')&'.
+
+Kompilator zwraca wtedy tu błąd:
+
+    &b'int&' someInt = &b'int&'.MaxValue + &y'1&';
+                  &r'^^^^^^^^^^^^^^^^&'
+Można jednak otoczyć tą linijkę kody blokiem &b'unchecked&'.
+Wtedy kompilator nie sprawdzi tego czy dana operacja prowadzi do wyjścia poza maksymalną wartość typu &gr'(np. &y'" + int.MaxValue + @"&gr' dla &g'int&gr').
+
+Napisać można taki kod:
+
+&b'int&' someInt = &y'0&';
+
+&b'unchecked&' {
+    someInt = &b'int&'.MaxValue + &y'1&';
+
+    &g'Console&'.&y'WriteLine&'(someInt);
+}
+
+i zwróci on taką odpowiedź:
+
+&g'" + someInt + @"&'
+Jest to minimalna wartość &g'int&''a + 1.
+Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynuowała liczenie od najmniejszej wartości.
+");
         }
     }
 }
