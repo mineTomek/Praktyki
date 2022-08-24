@@ -10,6 +10,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        Console.Clear();
         bool exit = false;
 
         while (exit != true)
@@ -18,9 +19,9 @@ internal class Program
 
             int option = 0;
 
-            string? date = ListenForDate("Enter date of meeting", White, new[] { ("Exit", Red), (dateRegex.ToString(), Yellow) }, Gray, ref option);
+            string? date = ListenForInput("Enter date of meeting", White, new[] { ("Exit", Red), (dateRegex.ToString(), Yellow) }, Gray, ref option);
 
-            if (option == 1) // Exit
+            if (option == 1 || option == -1) // Exit
             {
                 exit = true;
                 continue;
@@ -54,7 +55,6 @@ internal class Program
             //Console.NewLine();
         }
 
-        Console.Clear();
         Console.WriteLine("Exiting the program...", Red);
     }
 
@@ -81,7 +81,7 @@ internal class Program
         date = string.Join('.', dateParts); // Set to passed date with extended month and day numbers
     }
 
-    static string ListenForDate(string entry,
+    static string ListenForInput(string entry,
                                 AllowedColor entryColor,
                                 (string, AllowedColor)[] targets,
                                 AllowedColor standardColor,
@@ -158,6 +158,11 @@ internal class Program
                 }
 
                 input = input.Remove(input.Length - 1);
+            } else if (keyInfo.Key == ConsoleKey.Escape) {
+                matchedIndex = -1;
+                exit = true;
+                Console.Clear();
+                continue;
             } else
             {
                 input += keyInfo.KeyChar;
@@ -218,7 +223,7 @@ internal class Program
 
     static bool SelectExercise(Type meetingClass)
     {
-        FieldInfo? getExercises = meetingClass.GetField("exercises"); //.GetMethod("GetExercises");
+        FieldInfo? getExercises = meetingClass.GetField("exercises");
 
         if (getExercises == null)
         {
@@ -282,7 +287,7 @@ internal class Program
                         try
                         {
                             exercise = exercises.Keys.ToArray()[selectedIndex];
-                        } catch //(IndexOutOfRangeException e)
+                        } catch
                         {
                             exercise = "Exit";
                         }
@@ -324,7 +329,7 @@ internal class Program
         method.Invoke(null, null);
 
         Console.NewLine();
-        Console.Write("Press any key to continue...", Gray);
+        Console.Write("Press any key to continue...", DarkGray);
         Console.ReadKey();
     }
 }
