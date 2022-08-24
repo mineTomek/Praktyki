@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Text.RegularExpressions;
 
 namespace Praktyki.Utilities
 {
@@ -69,16 +69,153 @@ namespace Praktyki.Utilities
             return Console.ReadKey();
         }
 
-        public static void NewLine()
+        public static void NewLine(int repeats = 1)
         {
-            Console.WriteLine();
+            for (int i = 0; i < repeats; i++)
+            {
+                Console.WriteLine();
+            }
         }
 
         public static void Clear() => Console.Clear();
 
-        public static void WriteFromString(string text)
+        public static void WriteFromString(string str)
         {
-            throw new NotImplementedException();
+            str = str.Trim();
+
+            Dictionary<string, AllowedColor> textWithColors = new Dictionary<string, AllowedColor>();
+
+            Regex colorCodeRegex = new Regex(@"&[a-z\.]{1,2}'");
+
+            AllowedColor printingColor = AllowedColor.White;
+
+            ColorParser parser = new ColorParser(str);
+
+            parser.Print();
+        }
+
+        public class ColorParser
+        {
+            char currentChar;
+            string str;
+            int index;
+            AllowedColor printColor;
+
+            public ColorParser(string _str)
+            {
+                str = _str;
+            }
+
+            public void Print(AllowedColor color = AllowedColor.White)
+            {
+                index = 0;
+
+                printColor = color;
+
+                Advance();
+
+                while (currentChar != '\0')
+                {
+                    if (currentChar == '&')
+                    {
+                        LookForColorStamp();
+                    } else
+                    {
+                        Write(currentChar, printColor);
+                    }
+
+                    Advance();
+                }
+
+                NewLine();
+            }
+
+            public void Advance()
+            {
+                if (index >= str.Length)
+                {
+                    currentChar = '\0';
+                    return;
+                }
+
+                currentChar = str[index];
+
+                index++;
+            }
+
+            void LookForColorStamp()
+            {
+                string colorStamp = "";
+
+                while (currentChar != '\'')
+                {
+                    Advance();
+                    colorStamp += currentChar;
+                }
+
+                colorStamp = colorStamp.TrimEnd('\'');
+
+                switch (colorStamp)
+                {
+                    case "":
+                        printColor = AllowedColor.White;
+                        break;
+                    case "w":
+                        printColor = AllowedColor.White;
+                        break;
+                    case "bl":
+                        printColor = AllowedColor.Black;
+                        break;
+                    case "b":
+                        printColor = AllowedColor.Blue;
+                        break;
+                    case "c":
+                        printColor = AllowedColor.Cyan;
+                        break;
+                    case "db":
+                        printColor = AllowedColor.DarkBlue;
+                        break;
+                    case "dc":
+                        printColor = AllowedColor.DarkCyan;
+                        break;
+                    case "dgr":
+                        printColor = AllowedColor.DarkGray;
+                        break;
+                    case "dg":
+                        printColor = AllowedColor.DarkGreen;
+                        break;
+                    case "dm":
+                        printColor = AllowedColor.DarkMagenta;
+                        break;
+                    case "dr":
+                        printColor = AllowedColor.DarkRed;
+                        break;
+                    case "dy":
+                        printColor = AllowedColor.DarkYellow;
+                        break;
+                    case "gr":
+                        printColor = AllowedColor.Gray;
+                        break;
+                    case "g":
+                        printColor = AllowedColor.Green;
+                        break;
+                    case "m":
+                        printColor = AllowedColor.Magenta;
+                        break;
+                    case "r":
+                        printColor = AllowedColor.Red;
+                        break;
+                    case "y":
+                        printColor = AllowedColor.Yellow;
+                        break;
+                    default:
+                        printColor = AllowedColor.White;
+                        NewLine();
+                        WriteLine("Invalid color stamp", AllowedColor.Red);
+                        NewLine();
+                        break;
+                }
+            }
         }
     }
 
