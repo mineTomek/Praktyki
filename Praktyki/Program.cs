@@ -5,13 +5,15 @@ using System.Threading.Channels;
 using Praktyki.Utilities;
 using System.Reflection;
 using System;
+using static Praktyki.Utilities.ConsoleMenu;
 
 internal class Program
 {
+    static bool exit = false;
+
     private static void Main(string[] args)
     {
         Console.Clear();
-        bool exit = false;
 
         while (exit != true)
         {
@@ -21,10 +23,22 @@ internal class Program
 
             string? date = ListenForInput("Enter date of meeting", White, new[] { ("Exit", Red), (dateRegex.ToString(), Yellow) }, Gray, ref option);
 
-            if (option == 1 || option == -1) // Exit
+            if (option == 1) // Exit [Option]
             {
                 exit = true;
                 continue;
+            }
+
+            if (option == -1) // Exit [Escape key]
+            {
+                if (string.IsNullOrWhiteSpace(date)) // Date is empty
+                {
+                    exit = true; // Actualy exit
+                    continue;    //
+                } else // Date is not empty
+                {
+                    continue; // Start loop again (clear date)
+                }
             }
 
             if (string.IsNullOrWhiteSpace(date)) {
@@ -89,9 +103,9 @@ internal class Program
     {
         string input = "";
 
-        bool exit = false;
+        bool exitListener = false;
 
-        while (!exit)
+        while (!exitListener)
         {
 
             Console.Write($"{entry}: ", entryColor);
@@ -147,7 +161,7 @@ internal class Program
                     Console.Clear();
                     continue;
                 }
-                exit = true;
+                exitListener = true;
                 Console.Clear();
                 continue;
             } else if (keyInfo.Key == ConsoleKey.Backspace)
@@ -160,7 +174,7 @@ internal class Program
                 input = input.Remove(input.Length - 1);
             } else if (keyInfo.Key == ConsoleKey.Escape) {
                 matchedIndex = -1;
-                exit = true;
+                exitListener = true;
                 Console.Clear();
                 continue;
             } else
@@ -221,7 +235,7 @@ internal class Program
         }
     }
 
-    static bool SelectExercise(Type meetingClass)
+    static bool SelectExercise(Type meetingClass, int startIndex = 0)
     {
         FieldInfo? getExercises = meetingClass.GetField("exercises");
 
@@ -232,84 +246,40 @@ internal class Program
 
         Dictionary<string, Delegate> exercises = (Dictionary<string, Delegate>)getExercises.GetValue(null);
 
-        string exercise = "";
+        List<MenuOption> options = new List<MenuOption>();
 
-        int selectedIndex = 0;
-
-        while (exercise != "Exit")
+        foreach (string exercise in exercises.Keys)
         {
-            while (exercise == "")
-            {
-                Console.Clear();
+            options.Add(new MenuOption(exercise));
+        }
 
-                Console.WriteLine("Choose Exercise:");
+        options.Add(new MenuOption("Exit", DarkRed, Red));
 
-                for (int i = 0; i < exercises.Count + 1; i++)
-                {
-                    if (i == exercises.Count)
-                    {
-                        if (i == selectedIndex)
-                        {
-                            Console.Write("\t> ", Yellow);
-                            Console.WriteLine("Exit", Red);
-                        }
-                        else
-                        {
-                            Console.Write("\t  ");
-                            Console.WriteLine("Exit", DarkRed);
-                        }
-                    } else
-                    {
-                        if (i == selectedIndex)
-                        {
-                            Console.Write("\t> ", Yellow);
-                            Console.WriteLine(exercises.Keys.ToArray()[i]);
-                        }
-                        else
-                        {
-                            Console.Write("\t  ");
-                            Console.WriteLine(exercises.Keys.ToArray()[i], Gray);
-                        }
-                    }
-                }
+        ConsoleMenu menu = new ConsoleMenu(options.ToArray());
 
-                ConsoleKey key = Console.ReadKey().Key;
+        Delegate exerciseMethod = null;
 
-                switch (key)
-                {
-                    case ConsoleKey.UpArrow:
-                        selectedIndex--;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        selectedIndex++;
-                        break;
-                    case ConsoleKey.Enter:
-                        try
-                        {
-                            exercise = exercises.Keys.ToArray()[selectedIndex];
-                        } catch
-                        {
-                            exercise = "Exit";
-                        }
-                        break;
-                    case ConsoleKey.Escape:
-                        exercise = "Exit";
-                        break;
-                    default:
-                        break;
-                }
+        (int selectedIndex, string selectedOption) = menu.Show(startIndex);
 
-                selectedIndex = Math.Clamp(selectedIndex, 0, exercises.Count);
-            }
+        if (selectedOption == "Exit")
+        {
+            return true;
+        }
 
-            Console.NewLine();
+        try
+        {
+            exerciseMethod = exercises[selectedOption];
+        } catch
+        {
+            Console.WriteLine("Something went wrong while selecting exercise...", Red);
+            return false;
+        }
 
-            if (exercise != "Exit")
-            {
-                RunExercise(exercise, exercises[exercise].Method);
+        if (exerciseMethod != null)
+        {
+            RunExercise(selectedOption, exerciseMethod.Method);
 
-                exercise = "";
-            }
+            SelectExercise(meetingClass, selectedIndex);
         }
 
         return true;
@@ -328,8 +298,6 @@ internal class Program
 
         method.Invoke(null, null);
 
-        Console.NewLine();
-        Console.Write("Press any key to continue...", DarkGray);
-        Console.ReadKey();
+        Console.StandardPause();
     }
 }
