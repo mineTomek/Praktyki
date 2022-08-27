@@ -79,6 +79,13 @@ namespace Praktyki.Utilities
 
         public static void Clear() => Console.Clear();
 
+        public static void StandardPause()
+        {
+            NewLine();
+            Write("Press any key to continue...", AllowedColor.DarkGray);
+            ReadKey();
+        }
+
         public static void WriteFromString(string str)
         {
             str = str.Trim();
