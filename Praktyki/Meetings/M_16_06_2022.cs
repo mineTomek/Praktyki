@@ -7,6 +7,7 @@ namespace Praktyki.Meetings
 {
     public static class M_16_06_2022
     {
+        static Dictionary<string, object> exercisesVaribles = new Dictionary<string, object>();
         public static Dictionary<string, Delegate> exercises = new Dictionary<string, Delegate>
         {
             { "Bool z int'a (0 / 1)", BoolFromInt },
@@ -154,6 +155,18 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 return GetIntsForSorting();
             }
 
+            if (rawString.ToLower().StartsWith("random") && rawString.Split(' ').Length > 0)
+            {
+                List<int> randomInts = new List<int>();
+
+                for (int i = 0; i < int.Parse(rawString.Split(' ')[1]); i++)
+                {
+                    randomInts.Add(new Random().Next(-150, 150));
+                }
+
+                return randomInts;
+            }
+
             bool isBad = false;
 
             List<int> ints = new List<int>();
@@ -192,42 +205,63 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             List<int> ints = GetIntsForSorting();
 
+            exercisesVaribles["bs_delay"] = 100;
+
+            WriteLine(StringifyList(ints), Blue);
+
+            Console.ReadKey(true);
+
             bool? swapped = null;
 
             while (swapped != false)
             {
-                swapped = false;
-
                 WriteLine(StringifyList(ints));
 
-                for (int i = 0; i < ints.Count - 1; i++)
-                {
-                    
-                    if (ints[i] > ints[i + 1])
-                    {
-                        swapped = true;
-                        (ints[i], ints[i + 1]) = (ints[i + 1], ints[i]); // Swap
-
-                        WriteFromString($"&y'{StringifyList(GetRange(ints, 0, i - 1))}&c'{ints[i]} {ints[i + 1]} &y'{StringifyList(GetRange(ints, i + 2, ints.Count - 1))}");
-                    } else
-                    {
-                        WriteFromString($"&w'{StringifyList(GetRange(ints, 0, i - 1))}&c'{ints[i]} {ints[i + 1]} &w'{StringifyList(GetRange(ints, i + 2, ints.Count - 1))}");
-                    }
-                }
+                swapped = BubbleEnumerate(ints);
             }
-
 
             WriteLine("Final list: " + StringifyList(ints), Green);
         }
 
-        static void BubbleEnumerate(List<int> ints, int delay, int curentIndex = 0)
+        static bool BubbleEnumerate(List<int> ints, int currentIndex = 0, bool swapped = false)
         {
-            var t = Task.Run(async delegate
+            if ((int)exercisesVaribles["bs_delay"] > 0)
             {
-                await Task.Delay(delay);
-            });
+                var t = Task.Run(async delegate
+                {
+                    await Task.Delay((int)exercisesVaribles["bs_delay"]);
+                });
+                t.Wait();
+            } else if ((int)exercisesVaribles["bs_delay"] < 0)
+            {
+                ReadKey();
+            }
 
-            BubbleEnumerate(ints, delay, curentIndex + 1);
+            if (ints[currentIndex] > ints[currentIndex + 1])
+            {
+                swapped = true;
+                (ints[currentIndex], ints[currentIndex + 1]) = (ints[currentIndex + 1], ints[currentIndex]); // Swap
+
+                WriteFromString($"&y'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &y'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+            }
+            else
+            {
+                WriteFromString($"&w'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &w'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+            }
+
+            if (currentIndex == ints.Count - 2)
+            {
+                return swapped;
+            }
+
+            if (Console.KeyAvailable)
+            {
+                //WriteLine("Key Available", Red);
+                Console.ReadKey(true);
+                exercisesVaribles["bs_delay"] = 0;
+            }
+
+            return BubbleEnumerate(ints, currentIndex + 1, swapped);
         }
 
         static void InsertSorting()
@@ -238,7 +272,7 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             List<int> ints = GetIntsForSorting();
 
-            WriteLine("Final list: " + StringifyList(ints), Green);
+            WriteFromString("&r'(Not)&g'Final list: " + StringifyList(ints));
         }
 
         static void MergeSorting()
@@ -249,9 +283,7 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             List<int> ints = GetIntsForSorting();
 
-            
-
-            WriteLine("Final list: " + StringifyList(ints), Green);
+            WriteFromString("&r'(Not)&g'Final list: " + StringifyList(ints));
         }
 
         static string StringifyList<T>(List<T> list, string separator = " ")
