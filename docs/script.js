@@ -1,1 +1,1 @@
-$("div").hide(0).delay(1000).show(1000);
+$("iframe").hide(0).delay(1000).show(1000);
