@@ -8,19 +8,19 @@ Jak kolor wpisanego przez Ciebie tekstu będzie żółty to znaczy, że data jes
 
 Jeśli wpiszesz coś żle możesz kliknąć `Esc` aby wszystko usunąć, lub kliknąć go jak nic nie jest wpisane, żeby wyjść z aplikacji.
 
-![Entering Date](Instructions/EnteringDate.png)
+![Entering Date](https://github.com/mineTomek/Praktyki/blob/main/Instructions/ChoosingExercise.png)
 
 Następnie pokaże się menu po którym można przesówać strzałkami.
 
-![Choosing Exercise](Instructions/ChoosingExercise.png)
+![Choosing Exercise](https://github.com/mineTomek/Praktyki/blob/main/Instructions/ChoosingExercise.png)
 
 To menu zawiera wszystkie zpisane do rejestru zadania oraz opcję `Exit`, która wychodzi do menu głównego.
 
-![Exiting App](Instructions/ExitingApp.png)
+![Exiting App](https://github.com/mineTomek/Praktyki/blob/main/Instructions/ExitingApp.png)
 
 Po wybraniu opcji należy kliknąć `Enter`, aby wykonać funkcję która jest przypisana do zadania.
 
-![Viewing Exercise](Instructions/ViewingExercise.png)
+![Viewing Exercise](https://github.com/mineTomek/Praktyki/blob/main/Instructions/ViewingExercise.png)
 
 ---
 
