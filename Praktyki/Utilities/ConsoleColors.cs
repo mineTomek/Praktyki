@@ -4,8 +4,15 @@ namespace Praktyki.Utilities
 {
     public static class ConsoleColors
     {
+        public static bool allowPrinting = true;
+
         public static void WriteLine(object? obj = null, AllowedColor? color = null)
         {
+            if (!allowPrinting)
+            {
+                return;
+            }
+
             if (obj == null)
             {
                 Console.WriteLine();
@@ -26,6 +33,11 @@ namespace Praktyki.Utilities
 
         public static void Write(object obj, AllowedColor? color = null)
         {
+            if (!allowPrinting)
+            {
+                return;
+            }
+
             if (color == null)
             {
                 Console.Write(obj);
@@ -64,9 +76,9 @@ namespace Praktyki.Utilities
             return output;
         }
 
-        public static ConsoleKeyInfo ReadKey()
+        public static ConsoleKeyInfo ReadKey(bool showChar = false)
         {
-            return Console.ReadKey();
+            return Console.ReadKey(showChar);
         }
 
         public static void NewLine(int repeats = 1)
