@@ -155,13 +155,22 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 return GetIntsForSorting();
             }
 
-            if (rawString.ToLower().StartsWith("random") && rawString.Split(' ').Length > 0)
+            if (rawString.ToLower().StartsWith("r") && rawString.Split(' ').Length > 0)
             {
                 List<int> randomInts = new List<int>();
 
-                for (int i = 0; i < int.Parse(rawString.Split(' ')[1]); i++)
+                int amount = int.Parse(rawString.Split(' ')[1]);
+
+                if (amount < 2)
                 {
-                    randomInts.Add(new Random().Next(-150, 150));
+                    Clear();
+                    WriteLine("List would be too small", Red);
+                    return GetIntsForSorting();
+                }
+
+                for (int i = 0; i < amount; i++)
+                {
+                    randomInts.Add(new Random().Next(-200, 200));
                 }
 
                 return randomInts;
@@ -194,6 +203,13 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 return GetIntsForSorting();
             }
 
+            if (ints.Count < 2)
+            {
+                Clear();
+                WriteLine("This list is too small", Red);
+                return GetIntsForSorting();
+            }
+
             return ints;
         }
 
@@ -205,11 +221,11 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             List<int> ints = GetIntsForSorting();
 
-            exercisesVaribles["bs_delay"] = 100;
+            exercisesVaribles["bs_delay"] = 300;
 
             WriteLine(StringifyList(ints), Blue);
 
-            Console.ReadKey(true);
+            ReadKey(true);
 
             bool? swapped = null;
 
@@ -220,10 +236,12 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 swapped = BubbleEnumerate(ints);
             }
 
+            ConsoleColors.allowPrinting = true;
+
             WriteLine("Final list: " + StringifyList(ints), Green);
         }
 
-        static bool BubbleEnumerate(List<int> ints, int currentIndex = 0, bool swapped = false)
+        static bool BubbleEnumerate(List<int> ints, int currentIndex = 0, bool swapped = false, bool skip = false)
         {
             if ((int)exercisesVaribles["bs_delay"] > 0)
             {
@@ -234,7 +252,7 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 t.Wait();
             } else if ((int)exercisesVaribles["bs_delay"] < 0)
             {
-                ReadKey();
+                skip = true;
             }
 
             if (ints[currentIndex] > ints[currentIndex + 1])
@@ -242,11 +260,17 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 swapped = true;
                 (ints[currentIndex], ints[currentIndex + 1]) = (ints[currentIndex + 1], ints[currentIndex]); // Swap
 
-                WriteFromString($"&y'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &y'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+                if (!skip)
+                {
+                    WriteFromString($"&y'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &y'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+                }
             }
             else
             {
-                WriteFromString($"&w'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &w'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+                if (!skip)
+                {
+                    WriteFromString($"&w'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &w'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+                }
             }
 
             if (currentIndex == ints.Count - 2)
@@ -256,12 +280,26 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             if (Console.KeyAvailable)
             {
-                //WriteLine("Key Available", Red);
-                Console.ReadKey(true);
-                exercisesVaribles["bs_delay"] = 0;
+                ConsoleKey key = ReadKey(true).Key;
+
+                if (key == ConsoleKey.Escape)
+                {
+                    exercisesVaribles["bs_delay"] = -1;
+                    ConsoleColors.allowPrinting = false;
+                } else
+                {
+                    if ((int)exercisesVaribles["bs_delay"] == 0)
+                    {
+                        exercisesVaribles["bs_delay"] = 300;
+                    }
+                    else if ((int)exercisesVaribles["bs_delay"] == 300)
+                    {
+                        exercisesVaribles["bs_delay"] = 0;
+                    }
+                }
             }
 
-            return BubbleEnumerate(ints, currentIndex + 1, swapped);
+            return BubbleEnumerate(ints, currentIndex + 1, swapped: swapped, skip: skip);
         }
 
         static void InsertSorting()
