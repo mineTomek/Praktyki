@@ -1,4 +1,9 @@
 body {
-  background-color: #00d306;
+  background-color: #fafafa;
   font-family: Arial;
+}
+
+iframe {
+  width: 100%;
+  aspect-ratio: 4/3;
 }
