@@ -6,9 +6,9 @@ namespace Praktyki.Utilities
 {
     public class ConsoleMenu
     {
-        AllowedColor arrowColor;
+        readonly AllowedColor arrowColor;
+        readonly MenuOption[] options;
 
-        MenuOption[] options;
 
         public ConsoleMenu(MenuOption[] _options, AllowedColor _arrowColor = Yellow)
         {

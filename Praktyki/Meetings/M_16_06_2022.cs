@@ -310,7 +310,7 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             List<int> ints = GetIntsForSorting();
 
-            WriteFromString("&r'(Not)&g'Final list: " + StringifyList(ints));
+            WriteFromString("&r'(Not) &g'Final list: " + StringifyList(ints));
         }
 
         static void MergeSorting()
@@ -321,7 +321,7 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             List<int> ints = GetIntsForSorting();
 
-            WriteFromString("&r'(Not)&g'Final list: " + StringifyList(ints));
+            WriteFromString("&r'(Not) &g'Final list: " + StringifyList(ints));
         }
 
         static string StringifyList<T>(List<T> list, string separator = " ")

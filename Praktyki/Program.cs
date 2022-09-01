@@ -1,11 +1,10 @@
 ﻿using Console = Praktyki.Utilities.ConsoleColors;
 using static Praktyki.Utilities.AllowedColor;
+using static Praktyki.Utilities.ConsoleMenu;
 using System.Text.RegularExpressions;
-using System.Threading.Channels;
 using Praktyki.Utilities;
 using System.Reflection;
 using System;
-using static Praktyki.Utilities.ConsoleMenu;
 
 internal class Program
 {
@@ -34,7 +33,7 @@ internal class Program
                 if (string.IsNullOrWhiteSpace(date)) // Date is empty
                 {
                     exit = true; // Actualy exit
-                    continue;    //
+                    continue;
                 } else // Date is not empty
                 {
                     continue; // Start loop again (clear date)
