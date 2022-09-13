@@ -10,18 +10,15 @@
   <ItemGroup>
     <None Remove="Pastel" />
     <None Remove="Meetings\" />
-    <None Remove="Utilities\" />
     <None Remove="Microsoft.AspNetCore.Http" />
     <None Remove="Microsoft.AspNetCore.Components" />
     <None Remove="Microsoft.AspNetCore.Components.Web" />
+    <None Remove="GreatConsole" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Meetings\" />
-    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
+    <PackageReference Include="GreatConsole" Version="1.0.1" />
   </ItemGroup>
 </Project>
