@@ -1,6 +1,6 @@
-﻿using static Praktyki.Utilities.ConsoleColors;
-using static Praktyki.Utilities.AllowedColor;
-using Praktyki.Utilities;
+﻿using static GreatConsole.ConsoleColors.AllowedColor;
+using static GreatConsole.ConsoleColors;
+using GreatConsole;
 using System.Text;
 
 namespace Praktyki.Meetings
@@ -8,6 +8,7 @@ namespace Praktyki.Meetings
     public static class M_30_06_2022
     {
         static Dictionary<string, object> exercisesVaribles = new Dictionary<string, object>();
+
         public static Dictionary<string, Delegate> exercises = new Dictionary<string, Delegate>
         {
             { "Sortowanie cyfr cd.", Sorting }
@@ -35,6 +36,11 @@ namespace Praktyki.Meetings
                     break;
                 default:
                     return;
+            }
+
+            if (exercisesVaribles.ContainsKey("exit"))
+            {
+                return;
             }
 
             StandardPause();
@@ -113,11 +119,11 @@ namespace Praktyki.Meetings
             return ints;
         }
 
-        static void BubbleSorting()
+        static void InsertSorting()
         {
             Clear();
 
-            WriteLine("Bubble Sorting:", Green);
+            WriteLine("Insert Sorting:", Green);
 
             List<int> ints = GetIntsForSorting();
 
@@ -127,21 +133,12 @@ namespace Praktyki.Meetings
 
             ReadKey(true);
 
-            bool? swapped = null;
+            ints = InsertEnumerate(ints);
 
-            while (swapped != false)
-            {
-                WriteLine(StringifyList(ints));
-
-                swapped = BubbleEnumerate(ints);
-            }
-
-            ConsoleColors.allowPrinting = true;
-
-            WriteLine("Final list: " + StringifyList(ints), Green);
+            WriteFromString("&g'Final list: " + StringifyList(ints));
         }
 
-        static bool BubbleEnumerate(List<int> ints, int currentIndex = 0, bool swapped = false, bool skip = false)
+        static List<int> InsertEnumerate(List<int> ints, int currentIndex = 0, bool skip = false)
         {
             if ((int)exercisesVaribles["bs_delay"] > 0)
             {
@@ -155,27 +152,34 @@ namespace Praktyki.Meetings
                 skip = true;
             }
 
-            if (ints[currentIndex] > ints[currentIndex + 1])
-            {
-                swapped = true;
-                (ints[currentIndex], ints[currentIndex + 1]) = (ints[currentIndex + 1], ints[currentIndex]); // Swap
+            int j = currentIndex;
+
+            while (j > 0 && ints[j - 1] > ints[j]) {
+                (ints[j], ints[j - 1]) = (ints[j - 1], ints[j]);
+
+                j -= 1;
 
                 if (!skip)
                 {
-                    WriteFromString($"&y'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &y'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
+                    WriteFromString($"&'{StringifyList(GetRange(ints, 0, j - 1))}&g'{ints[j]} &c'{ints[j + 1]} &'{StringifyList(GetRange(ints, j + 2, ints.Count - 1))}");
                 }
-            }
-            else
-            {
-                if (!skip)
+
+                var t = Task.Run(async delegate
                 {
-                    WriteFromString($"&w'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} {ints[currentIndex + 1]} &w'{StringifyList(GetRange(ints, currentIndex + 2, ints.Count - 1))}");
-                }
+                    await Task.Delay((int)exercisesVaribles["bs_delay"]);
+                });
+
+                t.Wait();
             }
 
-            if (currentIndex == ints.Count - 2)
+            if (!skip)
             {
-                return swapped;
+                WriteFromString($"&'{StringifyList(GetRange(ints, 0, currentIndex - 1))}&c'{ints[currentIndex]} &'{StringifyList(GetRange(ints, currentIndex + 1, ints.Count - 1))}");
+            }
+
+            if (currentIndex == ints.Count - 1)
+            {
+                return ints;
             }
 
             if (Console.KeyAvailable)
@@ -199,29 +203,32 @@ namespace Praktyki.Meetings
                 }
             }
 
-            return BubbleEnumerate(ints, currentIndex + 1, swapped: swapped, skip: skip);
-        }
-
-        static void InsertSorting()
-        {
-            Clear();
-
-            WriteLine("Bubble Sorting:", Green);
-
-            List<int> ints = GetIntsForSorting();
-
-            WriteFromString("&r'(Not) &g'Final list: " + StringifyList(ints));
+            return InsertEnumerate(ints, currentIndex + 1, skip);
         }
 
         static void MergeSorting()
         {
+            WriteLine("Not Implemented!", Red);
+
+            exercisesVaribles["exit"] = true;
+
+            return;
+
             Clear();
 
-            WriteLine("Bubble Sorting:", Green);
+            WriteLine("Merge Sorting:", Green);
 
             List<int> ints = GetIntsForSorting();
 
-            WriteFromString("&r'(Not) &g'Final list: " + StringifyList(ints));
+            exercisesVaribles["bs_delay"] = 300;
+
+            WriteLine(StringifyList(ints), Blue);
+
+            ReadKey(true);
+
+            ints = InsertEnumerate(ints);
+
+            WriteFromString("&g'Final list: " + StringifyList(ints));
         }
 
         static string StringifyList<T>(List<T> list, string separator = " ")
