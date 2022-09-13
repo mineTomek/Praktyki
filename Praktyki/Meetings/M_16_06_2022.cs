@@ -1,6 +1,6 @@
-﻿using static Praktyki.Utilities.ConsoleColors;
-using static Praktyki.Utilities.AllowedColor;
-using Praktyki.Utilities;
+﻿using static GreatConsole.ConsoleColors.AllowedColor;
+using static GreatConsole.ConsoleColors;
+using GreatConsole;
 using System.Text;
 
 namespace Praktyki.Meetings
@@ -8,6 +8,7 @@ namespace Praktyki.Meetings
     public static class M_16_06_2022
     {
         static Dictionary<string, object> exercisesVaribles = new Dictionary<string, object>();
+
         public static Dictionary<string, Delegate> exercises = new Dictionary<string, Delegate>
         {
             { "Bool z int'a (0 / 1)", BoolFromInt },
@@ -129,6 +130,11 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                     return;
             }
 
+            if (exercisesVaribles.ContainsKey("exit"))
+            {
+                return;
+            }
+
             StandardPause();
 
             Sorting();
@@ -219,14 +225,14 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
 
             ReadKey(true);
 
-            bool? swapped = null;
+            bool swapped = false;
 
-            while (swapped != false)
+            do
             {
                 WriteLine(StringifyList(ints));
 
                 swapped = BubbleEnumerate(ints);
-            }
+            } while (swapped);
 
             ConsoleColors.allowPrinting = true;
 
@@ -292,28 +298,6 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
             }
 
             return BubbleEnumerate(ints, currentIndex + 1, swapped: swapped, skip: skip);
-        }
-
-        static void InsertSorting()
-        {
-            Clear();
-
-            WriteLine("Bubble Sorting:", Green);
-
-            List<int> ints = GetIntsForSorting();
-
-            WriteFromString("&r'(Not) &g'Final list: " + StringifyList(ints));
-        }
-
-        static void MergeSorting()
-        {
-            Clear();
-
-            WriteLine("Bubble Sorting:", Green);
-
-            List<int> ints = GetIntsForSorting();
-
-            WriteFromString("&r'(Not) &g'Final list: " + StringifyList(ints));
         }
 
         static string StringifyList<T>(List<T> list, string separator = " ")
