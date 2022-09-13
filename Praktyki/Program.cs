@@ -1,9 +1,9 @@
-﻿using Console = Praktyki.Utilities.ConsoleColors;
-using static Praktyki.Utilities.AllowedColor;
-using static Praktyki.Utilities.ConsoleMenu;
+﻿using static GreatConsole.ConsoleColors.AllowedColor;
+using Console = GreatConsole.ConsoleColors;
+using static GreatConsole.ConsoleMenu;
 using System.Text.RegularExpressions;
-using Praktyki.Utilities;
 using System.Reflection;
+using GreatConsole;
 using System;
 
 internal class Program
@@ -95,9 +95,9 @@ internal class Program
     }
 
     static string ListenForInput(string entry,
-                                AllowedColor entryColor,
-                                (string, AllowedColor)[] targets,
-                                AllowedColor standardColor,
+                                ConsoleColors.AllowedColor entryColor,
+                                (string, ConsoleColors.AllowedColor)[] targets,
+                                ConsoleColors.AllowedColor standardColor,
                                 ref int matchedIndex)
     {
         string input = "";
@@ -109,11 +109,11 @@ internal class Program
 
             Console.Write($"{entry}: ", entryColor);
 
-            (string, AllowedColor) toWrite = ("", standardColor);
+            (string, ConsoleColors.AllowedColor) toWrite = ("", standardColor);
 
             int counter = 0;
 
-            foreach ((string, AllowedColor) target in targets)
+            foreach ((string, ConsoleColors.AllowedColor) target in targets)
             {
                 bool match = false;
 
@@ -254,7 +254,7 @@ internal class Program
 
         options.Add(new MenuOption("Exit", DarkRed, Red));
 
-        ConsoleMenu menu = new ConsoleMenu(options.ToArray());
+        ConsoleMenu menu = new ConsoleMenu("Choose exercise:", options.ToArray());
 
         Delegate exerciseMethod = null;
 
