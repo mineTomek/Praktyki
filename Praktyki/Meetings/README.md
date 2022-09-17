@@ -8,6 +8,6 @@ M\_[dd]\_[mm]\_[yyyy].cs
 > 
 > __mm__  - miesiąc spotkania
 > 
-> __yyy__ - rok spotkania
+> __yyyy__ - rok spotkania
 
 Są one odczytywane przez program i wykonywana jest w nich funkcja danego zadania.
