@@ -119,7 +119,7 @@ Stało się tak dlatego, że operacja doszła do maksymalnej wartości i kontynu
                 new ConsoleMenu.MenuOption("Exit", DarkRed, Red)
             };
 
-            (int selectedIndex, _) = new ConsoleMenu(options).Show();
+            (int selectedIndex, _) = new ConsoleMenu("Select Exercise: ", options).Show();
 
             switch (selectedIndex)
             {

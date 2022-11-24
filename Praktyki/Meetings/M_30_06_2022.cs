@@ -24,7 +24,7 @@ namespace Praktyki.Meetings
                 new ConsoleMenu.MenuOption("Exit", DarkRed, Red)
             };
 
-            (int selectedIndex, _) = new ConsoleMenu(options).Show();
+            (int selectedIndex, _) = new ConsoleMenu("Select Algorithm: ", options).Show();
 
             switch (selectedIndex)
             {
@@ -127,27 +127,34 @@ namespace Praktyki.Meetings
 
             List<int> ints = GetIntsForSorting();
 
-            exercisesVaribles["bs_delay"] = 300;
+            exercisesVaribles["is_delay"] = 300;
 
             WriteLine(StringifyList(ints), Blue);
 
-            ReadKey(true);
+            ConsoleModifiers mod = ReadKey(true).Modifiers;
+
+            if (mod == ConsoleModifiers.Shift)
+            {
+                exercisesVaribles["is_delay"] = -1;
+            }
 
             ints = InsertEnumerate(ints);
+
+            Console.Beep();
 
             WriteFromString("&g'Final list: " + StringifyList(ints));
         }
 
         static List<int> InsertEnumerate(List<int> ints, int currentIndex = 0, bool skip = false)
         {
-            if ((int)exercisesVaribles["bs_delay"] > 0)
+            if ((int)exercisesVaribles["is_delay"] > 0)
             {
                 var t = Task.Run(async delegate
                 {
-                    await Task.Delay((int)exercisesVaribles["bs_delay"]);
+                    await Task.Delay((int)exercisesVaribles["is_delay"]);
                 });
                 t.Wait();
-            } else if ((int)exercisesVaribles["bs_delay"] < 0)
+            } else if ((int)exercisesVaribles["is_delay"] < 0)
             {
                 skip = true;
             }
@@ -162,14 +169,14 @@ namespace Praktyki.Meetings
                 if (!skip)
                 {
                     WriteFromString($"&'{StringifyList(GetRange(ints, 0, j - 1))}&g'{ints[j]} &c'{ints[j + 1]} &'{StringifyList(GetRange(ints, j + 2, ints.Count - 1))}");
+
+                    var t = Task.Run(async delegate
+                    {
+                        await Task.Delay((int)exercisesVaribles["is_delay"]);
+                    });
+
+                    t.Wait();
                 }
-
-                var t = Task.Run(async delegate
-                {
-                    await Task.Delay((int)exercisesVaribles["bs_delay"]);
-                });
-
-                t.Wait();
             }
 
             if (!skip)
@@ -188,17 +195,18 @@ namespace Praktyki.Meetings
 
                 if (key == ConsoleKey.Escape)
                 {
-                    exercisesVaribles["bs_delay"] = -1;
+                    exercisesVaribles["is_delay"] = -1;
+                    WriteLine("Sorting...", Yellow);
                     ConsoleColors.allowPrinting = false;
                 } else
                 {
-                    if ((int)exercisesVaribles["bs_delay"] == 0)
+                    if ((int)exercisesVaribles["is_delay"] == 0)
                     {
-                        exercisesVaribles["bs_delay"] = 300;
+                        exercisesVaribles["is_delay"] = 300;
                     }
-                    else if ((int)exercisesVaribles["bs_delay"] == 300)
+                    else if ((int)exercisesVaribles["is_delay"] == 300)
                     {
-                        exercisesVaribles["bs_delay"] = 0;
+                        exercisesVaribles["is_delay"] = 0;
                     }
                 }
             }
